@@ -1,0 +1,35 @@
+{
+  "family": "gcc-crm-ai",
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "256",
+  "memory": "512",
+  "executionRoleArn": "arn:aws:iam::${AWS_ACCOUNT}:role/gcc-crm-ecs-execution",
+  "taskRoleArn": "arn:aws:iam::${AWS_ACCOUNT}:role/gcc-crm-ecs-task",
+  "containerDefinitions": [
+    {
+      "name": "ai",
+      "image": "${AWS_ACCOUNT}.dkr.ecr.${AWS_REGION}.amazonaws.com/gcc-crm/ai:${IMAGE_TAG}",
+      "portMappings": [{ "containerPort": 8100, "protocol": "tcp" }],
+      "healthCheck": {
+        "command": ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://127.0.0.1:8100/health', timeout=3).read()\" || exit 1"],
+        "interval": 30,
+        "timeout": 5,
+        "retries": 3,
+        "startPeriod": 15
+      },
+      "environment": [
+        { "name": "PORT", "value": "8100" },
+        { "name": "AI_TIMEOUT_SECONDS", "value": "30" }
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/gcc-crm-ai",
+          "awslogs-region": "${AWS_REGION}",
+          "awslogs-stream-prefix": "ai"
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,56 @@
+name: aws-deploy
+# Deploy to AWS ECS on push to main. Requires repo secrets:
+#   AWS_ROLE_ARN (OIDC role), AWS_REGION, AWS_ACCOUNT, and the app env vars.
+# Uses OIDC — no long-lived AWS keys in GitHub.
+on:
+  push:
+    branches: [main]
+    paths: ["apps/**", "packages/**", "workers/**", "docker/**", "infrastructure/**", ".github/workflows/aws-deploy.yml"]
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  test:
+    uses: ./.github/workflows/ci.yml   # reuse the test+build gate
+
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: ${{ secrets.AWS_REGION }}
+      - uses: aws-actions/amazon-ecr-login@v2
+        id: ecr
+      - name: Build & push API image
+        working-directory: .
+        env:
+          REGISTRY: ${{ steps.ecr.outputs.registry }}
+          TAG: ${{ github.sha }}
+        run: |
+          docker build -f docker/api.Dockerfile -t $REGISTRY/gcc-crm/api:$TAG .
+          docker push $REGISTRY/gcc-crm/api:$TAG
+      - name: Render task definition
+        env:
+          REGISTRY: ${{ steps.ecr.outputs.registry }}
+          TAG: ${{ github.sha }}
+        run: |
+          envsubst < infra/aws/taskdef-api.json > taskdef-rendered.json
+          # envsubst availability: install gettext if missing
+      - name: Deploy to ECS
+        run: |
+          aws ecs update-service --cluster gcc-crm --service api \
+            --task-definition file://taskdef-rendered.json --force-new-deployment
+          aws ecs wait services-stable --cluster gcc-crm --services api
+      - name: Rollback on instability (previous revision)
+        if: failure()
+        run: |
+          PREV=$(aws ecs describe-services --cluster gcc-crm --services api \
+            --query 'services[0].deployments[?status!=`PRIMARY`].taskDefinition | [0]' --output text)
+          [ "$PREV" != "None" ] && aws ecs update-service --cluster gcc-crm --service api \
+            --task-definition "$PREV" || echo "no previous revision; investigate manually"

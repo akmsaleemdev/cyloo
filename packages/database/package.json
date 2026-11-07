@@ -1,0 +1,11 @@
+{
+  "name": "@crm/database",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Schema authority: ordered Supabase SQL migrations. API production PostgreSQL persistence is not yet implemented.",
+  "scripts": {
+    "db:push": "supabase db push --workdir .",
+    "db:types": "supabase gen types typescript --remote --workdir . > supabase/database.types.ts",
+    "db:verify-rls": "supabase test db --workdir ."
+  }
+}

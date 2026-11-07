@@ -1,0 +1,36 @@
+@import "tailwindcss";
+
+/* Design tokens — approved brand table (light/dark), logical props for RTL */
+:root {
+  --primary: #0F766E; --primary-hover: #115E59; --on-primary: #fff;
+  --bg: #F8FAFC; --card: #fff; --surface-2: #F1F5F9;
+  --text: #0F172A; --text-2: #475569; --border: #E2E8F0; --input-border: #64748B;
+  --ai: #7C3AED; --on-ai: #fff;
+  --danger: #B91C1C; --ok: #15803D; --warn: #A16207;
+}
+html[data-theme="dark"] {
+  --primary: #2DD4BF; --primary-hover: #5EEAD4; --on-primary: #0F172A;
+  --bg: #0F172A; --card: #1E293B; --surface-2: #334155;
+  --text: #F8FAFC; --text-2: #CBD5E1; --border: #334155; --input-border: #94A3B8;
+  --ai: #A78BFA; --on-ai: #0F172A;
+  --danger: #F87171; --ok: #4ADE80; --warn: #FBBF24;
+}
+body { background: var(--bg); color: var(--text); }
+.card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; }
+.btn { display: inline-flex; align-items: center; gap: .45rem; padding: .5rem 1rem; border-radius: 999px; font-weight: 600; font-size: .875rem; transition: background .15s; }
+.btn-primary { background: var(--primary); color: var(--on-primary); }
+.btn-primary:hover { background: var(--primary-hover); }
+.btn-ghost { border: 1px solid var(--border); color: var(--text); }
+.btn-ghost:hover { background: var(--surface-2); }
+.btn-ai { background: var(--ai); color: var(--on-ai); }
+.input { width: 100%; padding: .5rem .7rem; border: 1px solid var(--input-border); border-radius: 10px; background: var(--card); color: var(--text); }
+.input:focus { outline: 2px solid var(--primary); }
+.muted { color: var(--text-2); }
+.badge { display: inline-flex; padding: .15rem .6rem; border-radius: 999px; font-size: .72rem; font-weight: 700; background: var(--surface-2); color: var(--text-2); }
+.badge-ok { background: color-mix(in srgb, var(--ok) 14%, transparent); color: var(--ok); }
+.badge-warn { background: color-mix(in srgb, var(--warn) 14%, transparent); color: var(--warn); }
+table.data { width: 100%; border-collapse: collapse; font-size: .875rem; }
+table.data th { text-align: start; font-size: .7rem; text-transform: uppercase; letter-spacing: .06em; color: var(--text-2); padding: .55rem .8rem; background: var(--surface-2); }
+table.data td { padding: .55rem .8rem; border-top: 1px solid var(--border); }
+.focusable:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition: none !important; animation: none !important; } }

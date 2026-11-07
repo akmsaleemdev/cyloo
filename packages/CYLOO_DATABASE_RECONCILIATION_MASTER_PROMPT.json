@@ -1,0 +1,175 @@
+{
+  "prompt_name": "CYLOO Enterprise Database Reconciliation and Full Schema Implementation",
+  "version": "1.0",
+  "role": ["Principal PostgreSQL Architect", "Supabase Security Engineer", "Senior Full-Stack Engineer", "Database Migration Engineer", "QA Automation Engineer"],
+  "mission": "Audit the existing CYLOO repository and reconcile the 81 runtime-registered tables with actual SQL migrations. Implement a real PostgreSQL persistence layer, design and implement database support for all 30 planned CRM modules, verify RLS and tenant isolation, and produce evidence-backed staging readiness. Do not assume any feature exists without inspecting code. Do not claim completion without running real database tests.",
+  "known_findings": {
+    "runtime_registered_table_count": 81,
+    "unmatched_runtime_names": ["ai_conversations", "ai_messages", "ai_runs", "dsar_requests", "outbound_webhooks", "sequences", "social_accounts", "social_posts", "webhook_deliveries", "users"],
+    "possible_mappings_to_verify": {"users": "Supabase auth.users or application profiles/memberships; never blindly expose auth.users", "ai_runs": "agent_runs only if semantics, foreign keys and callers match"},
+    "additional_problem": "SQL migration tables exist that runtime does not register; determine intentional ownership versus orphaned schema",
+    "test_gap": "90 in-memory tests do not establish PostgreSQL migration, authorization, or RLS correctness",
+    "reference_checklist": "GO-LIVE-CHECKLIST.md"
+  },
+  "non_negotiable_rules": [
+    "Inspect the actual repository, migrations, runtime table registry, generated types, query builders, API routes, background workers, and existing test setup before editing.",
+    "Do not invent table mappings or assume all 81 runtime names require physical tables.",
+    "Never run destructive migrations or reset a production database. Require explicit approval for irreversible changes.",
+    "Never put service-role credentials, database passwords, or privileged connection strings in browser code, logs, commits, or generated reports.",
+    "Rotate previously exposed database credentials using the provider's secure interface and update secret stores; do not print credentials.",
+    "Use staging first. Require an explicit approval gate before any production migration, data backfill, push, or deployment.",
+    "Do not mark a feature complete based only on mocked or in-memory tests.",
+    "Preserve existing working code, data, table identifiers, and integration contracts wherever possible."
+  ],
+  "execution_phases": [
+    {
+      "id": "P0",
+      "name": "Repository discovery and schema inventory",
+      "tasks": [
+        "Locate the canonical runtime registry and enumerate its 81 names and every call site.",
+        "Parse every SQL migration in execution order, including schemas, tables, views, functions, triggers, policies, indexes, constraints and grants.",
+        "Compare actual live staging schema with migration history and runtime expectations; detect drift.",
+        "Classify each name as physical table, view, external auth table, alias, deprecated model, virtual collection, or missing entity.",
+        "Generate machine-readable schema-diff.json and human-readable schema-reconciliation.md with owner, intended name, action, risk and affected code paths.",
+        "Inspect GO-LIVE-CHECKLIST.md and map each unmet item to a verification test."
+      ],
+      "exit_criteria": ["Every runtime name has an explicit resolved disposition", "Every migrated table has a documented owner or intentional exclusion", "No unreviewed destructive changes"]
+    },
+    {
+      "id": "P1",
+      "name": "Canonical data model and 30-module coverage",
+      "tasks": [
+        "Define a canonical PostgreSQL domain model with explicit schema ownership, consistent naming and documented relationships.",
+        "Create a traceability matrix linking each of the 30 product modules to tables, API repositories, policies and tests.",
+        "Reuse existing tables and columns when semantically correct; do not duplicate entities to satisfy string comparisons.",
+        "Design tenant-aware foreign keys, unique constraints, nullable rules, enum/check constraints, timestamps, indexes and archival policies.",
+        "Specify a safe migration path for every renamed, split or merged entity, including compatibility views where justified."
+      ],
+      "modules": [
+        "01 Customer 360", "02 Lead Management", "03 Sales Pipeline", "04 Sales Enablement and Quotations", "05 Account and Territory", "06 Unified Inbox", "07 WhatsApp Automation", "08 Social Communication", "09 Email SMS Voice", "10 AI Agent Studio", "11 AI Voice", "12 Workflow Automation", "13 Predictive Intelligence", "14 Marketing Campaigns", "15 Social Marketing", "16 Advertising Attribution", "17 Website Landing Pages Forms", "18 Helpdesk", "19 Scheduling", "20 Tasks Projects Operations", "21 Customer Portal", "22 Commerce Orders", "23 Billing Subscriptions", "24 Revenue Analytics", "25 Multi-Tenant SaaS", "26 Super Admin White Label", "27 Security Governance", "28 Integrations Developer API", "29 GCC Localization", "30 Industry Extensions"
+      ],
+      "domain_entities_to_evaluate": {
+        "identity_and_tenancy": ["profiles", "organizations", "memberships", "roles", "permissions", "role_assignments", "invitations", "tenant_settings", "tenant_entitlements", "audit_events"],
+        "crm": ["contacts", "companies", "contact_company_links", "leads", "lead_sources", "lead_scores", "pipelines", "pipeline_stages", "deals", "deal_activities", "tasks", "notes", "attachments", "custom_field_definitions", "custom_field_values", "territories"],
+        "messaging": ["channel_accounts", "social_accounts", "conversations", "messages", "message_attachments", "message_templates", "conversation_assignments", "provider_events", "outbound_webhooks", "webhook_deliveries", "delivery_attempts", "consent_events", "suppression_entries"],
+        "ai": ["ai_agents", "ai_agent_versions", "ai_conversations", "ai_messages", "ai_runs", "agent_runs", "ai_tool_calls", "knowledge_bases", "knowledge_documents", "document_chunks", "embeddings", "ai_evaluations", "ai_usage_records"],
+        "marketing": ["campaigns", "campaign_audiences", "segments", "sequences", "sequence_enrollments", "campaign_events", "social_posts", "ad_accounts", "ad_campaigns", "attribution_events", "landing_pages", "forms", "form_submissions"],
+        "automation": ["workflow_definitions", "workflow_versions", "workflow_runs", "workflow_steps", "workflow_step_runs", "scheduled_jobs", "outbox_events", "idempotency_keys", "dead_letter_events"],
+        "service_and_scheduling": ["tickets", "ticket_events", "sla_policies", "knowledge_articles", "appointments", "appointment_types", "availability_rules", "calendar_connections", "customer_feedback"],
+        "commerce_and_billing": ["products", "price_books", "quotes", "quote_items", "orders", "order_items", "invoices", "payments", "refunds", "subscriptions", "subscription_items", "usage_meters"],
+        "platform": ["integration_connections", "oauth_credentials", "api_clients", "api_keys", "webhook_subscriptions", "feature_flags", "plans", "reseller_accounts", "branding_settings", "custom_domains", "dsar_requests", "retention_policies", "localization_settings", "industry_templates"]
+      },
+      "entity_note": "These are candidates to evaluate against existing schemas, not a command to create duplicates or a claim of completeness. Extend based on discovered domain requirements."
+    },
+    {
+      "id": "P2",
+      "name": "Resolve ten named mismatches",
+      "resolution_requirements": {
+        "ai_conversations": "Decide whether AI sessions are distinct from customer inbox conversations; create explicit relation or a tested compatibility mapping.",
+        "ai_messages": "Define AI transcript ownership, role, sequence, token metadata, retention and foreign keys.",
+        "ai_runs": "Compare agent_runs semantics and references; choose migration, alias or distinct table with data-preserving backfill.",
+        "dsar_requests": "Implement data subject access/deletion request lifecycle, scoped authorization and auditable fulfillment.",
+        "outbound_webhooks": "Distinguish configured webhook subscriptions from outbound event deliveries and secret storage.",
+        "sequences": "Model sales/marketing sequence definitions, steps, enrollments, status and suppression enforcement.",
+        "social_accounts": "Store provider/account metadata and encrypted secret references, not plaintext tokens.",
+        "social_posts": "Model drafts, scheduled posts, provider IDs, publishing status and provider capability restrictions.",
+        "webhook_deliveries": "Track payload references, attempts, response codes, retry schedule, deduplication and DLQ status.",
+        "users": "Use Supabase auth.users for identity, plus application profiles and organization memberships as needed; enforce secure joins and never expose auth schema directly to untrusted clients."
+      },
+      "exit_criteria": ["All ten runtime references resolve to deliberate, tested persistence contracts", "No unsafe auth.users shortcut", "Existing data retained"]
+    },
+    {
+      "id": "P3",
+      "name": "Safe SQL migrations and PostgreSQL repositories",
+      "tasks": [
+        "Implement ordered, idempotent where appropriate, version-controlled SQL migrations and a repeatable fresh-staging bootstrap.",
+        "Use expand/backfill/validate/contract for incompatible schema changes; delay contract steps until consumers migrate.",
+        "Implement PostgreSQL repositories/adapters for all supported runtime operations and wire them through dependency injection.",
+        "Keep in-memory stores only as explicit test doubles; production must fail fast if PostgreSQL configuration is absent.",
+        "Add transaction boundaries, concurrency control, pagination, indexes, error translation, prepared/parameterized queries and connection pooling.",
+        "Update generated database types and check API/query contracts at compile time.",
+        "Support Supabase pooler for runtime and migration-compatible connection for migrations; verify SSL certificate and network compatibility."
+      ]
+    },
+    {
+      "id": "P4",
+      "name": "RLS, authorization, privacy and tenant security",
+      "tasks": [
+        "Inventory every tenant-owned table and prove ownership through tenant_id or a verified parent path.",
+        "Enable and test RLS on all applicable exposed tables, using least-privilege roles and secure auth.uid() membership checks.",
+        "Implement organization membership, role grants, cross-tenant foreign-key protection and object-level authorization.",
+        "Audit SECURITY DEFINER functions, search_path, view security behavior, service-role bypass and storage policies.",
+        "Restrict privileged writes to server-only contexts; verify public/anon roles cannot bypass tenant boundaries.",
+        "Implement consent, DSAR, retention, deletion, PII access logging and regional data governance controls where required.",
+        "Use dedicated tests for unauthenticated, member, tenant admin, platform admin, and cross-tenant attacker identities."
+      ],
+      "exit_criteria": ["No cross-tenant read or write in tested paths", "No unintentionally exposed private tables", "Documented policy coverage"]
+    },
+    {
+      "id": "P5",
+      "name": "Real Supabase integration and end-to-end verification",
+      "tasks": [
+        "Provision isolated disposable staging Supabase project or local Supabase stack with equivalent extensions and settings; never test destructive scenarios in production.",
+        "Apply migrations from an empty database and from a representative prior schema snapshot.",
+        "Run SQL schema introspection to compare registry, expected relations, live relations, columns, types, keys, indexes, triggers and policies.",
+        "Run repository integration tests against real PostgreSQL, including transactions, concurrency, pagination, dedupe and retry behavior.",
+        "Run RLS tests under real authenticated identities with at least two tenant organizations.",
+        "Run API and browser E2E tests for lead capture, CRM CRUD, pipeline changes, inbox persistence, AI runs, workflows, appointment booking, consent and audit logging.",
+        "Test empty/loading/error/offline/slow-network/no-results/permission-denied/session-expired/validation/success UI states.",
+        "Test rollback and point-in-time or snapshot restore procedure as supported by selected Supabase plan.",
+        "Record exact commands, pass/fail counts, evidence and remaining failures; do not replace failing database tests with mocks."
+      ],
+      "exit_criteria": ["Clean migration on fresh staging", "Upgrade migration passes", "Registry-to-schema contract checks pass", "Real PostgreSQL and RLS tests pass", "No critical unresolved security findings"]
+    },
+    {
+      "id": "P6",
+      "name": "Delivery, release gates and operational handoff",
+      "tasks": [
+        "Generate final migration files, typed repositories, updated registry, seed fixtures, integration tests, RLS tests, E2E tests, ERD, and documentation.",
+        "Update GO-LIVE-CHECKLIST.md with evidence-backed statuses.",
+        "Generate a CI pipeline that starts ephemeral PostgreSQL/Supabase-compatible testing, applies migrations, verifies schema contract and runs RLS/integration suites.",
+        "Produce a production migration runbook including preflight backup, dry-run, expected locks, monitoring, validation, rollback and escalation.",
+        "Provide a module-by-module completion matrix, missing features, unresolved blockers, and risk register.",
+        "Stop at the approval gate; do not deploy to production or push irreversible changes without explicit user authorization."
+      ]
+    }
+  ],
+  "schema_design_standards": {
+    "primary_keys": "Use UUID primary keys unless existing domain contracts justify another choice.",
+    "timestamps": "Use timestamptz in UTC; localize presentation by organization time zone.",
+    "tenancy": "Tenant-owned records require explicit isolation and safe cross-table relationships.",
+    "constraints": "Use foreign keys, check constraints, unique indexes and partial indexes where appropriate.",
+    "soft_delete": "Define per-entity archival/soft-delete rules, unique index behavior and retention policies.",
+    "data_integrity": "Use transactional outbox and idempotent webhook processing for externally triggered side effects.",
+    "performance": "Index tenant filters, common joins, lookup keys and time-range queries based on observed workloads.",
+    "sensitive_data": "Encrypt or vault tokens; use data minimization and retention controls for messages, transcripts and customer records.",
+    "supabase": "Distinguish auth.users from public profiles and membership tables; verify pgvector extension, storage RLS and auth hooks."
+  },
+  "required_artifacts": [
+    "docs/database/schema-inventory.md",
+    "docs/database/schema-reconciliation.md",
+    "docs/database/module-traceability-matrix.md",
+    "docs/database/erd.md",
+    "docs/database/rls-policy-matrix.md",
+    "docs/database/migration-runbook.md",
+    "docs/database/staging-test-evidence.md",
+    "docs/database/production-readiness.md",
+    "reports/schema-diff.json",
+    "version-controlled SQL migrations",
+    "typed PostgreSQL repositories and adapters",
+    "integration/RLS/E2E tests and CI configuration",
+    "updated GO-LIVE-CHECKLIST.md"
+  ],
+  "completion_definition": [
+    "All 81 original runtime registrations reconciled or explicitly deprecated with verified callers.",
+    "All ten named mismatches resolved and tested.",
+    "Every SQL table intentionally mapped to a module, infrastructure concern or documented exception.",
+    "All 30 modules represented in a schema traceability matrix; distinguish schema-ready from feature-implemented.",
+    "Production runtime uses PostgreSQL, not in-memory persistence.",
+    "Fresh and upgrade migrations pass on real staging database.",
+    "RLS and cross-tenant isolation tests pass with real auth identities.",
+    "No unresolved critical or high-severity security defects in release scope.",
+    "No fabricated test, deployment or production-readiness claims."
+  ],
+  "start_instruction": "Begin with P0. Show the actual repository inventory and the 81-to-SQL discrepancy matrix before proposing changes. Then execute phases sequentially with test evidence. Ask only for missing credentials or irreversible decisions; never request secrets in chat."
+}

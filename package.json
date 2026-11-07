@@ -1,0 +1,26 @@
+{
+  "name": "enterprise-crm",
+  "private": true,
+  "version": "1.0.0",
+  "workspaces": [
+    "apps/*",
+    "workers/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "npm run build -w @crm/shared && npm run build -w @crm/integrations && npm run build -w @crm/api && npm run build -w @crm/web",
+    "test": "npm run test -w @crm/shared && npm run test -w @crm/api",
+    "typecheck": "npm run typecheck -w @crm/shared && npm run typecheck -w @crm/integrations && npm run typecheck -w @crm/api",
+    "check:schema": "node scripts/check-schema-contract.mjs",
+    "load": "node scripts/load.mjs",
+    "worker:messaging": "npm run start -w @crm/worker-messaging",
+    "worker:automation": "npm run start -w @crm/worker-automation",
+    "ai-service": "cd apps/ai-service && uvicorn app.main:app --port 8100"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "devDependencies": {
+    "supabase": "^3.0.0"
+  }
+}

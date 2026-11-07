@@ -1,0 +1,41 @@
+{
+  "family": "gcc-crm-api",
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "512",
+  "memory": "1024",
+  "executionRoleArn": "arn:aws:iam::${AWS_ACCOUNT}:role/gcc-crm-ecs-execution",
+  "taskRoleArn": "arn:aws:iam::${AWS_ACCOUNT}:role/gcc-crm-ecs-task",
+  "containerDefinitions": [
+    {
+      "name": "api",
+      "image": "${AWS_ACCOUNT}.dkr.ecr.${AWS_REGION}.amazonaws.com/gcc-crm/api:${IMAGE_TAG}",
+      "portMappings": [{ "containerPort": 3001, "protocol": "tcp" }],
+      "healthCheck": {
+        "command": ["CMD-SHELL", "wget -qO- http://127.0.0.1:3001/api/docs >/dev/null || exit 1"],
+        "interval": 30, "timeout": 5, "retries": 3, "startPeriod": 15
+      },
+      "environment": [
+        { "name": "NODE_ENV", "value": "production" },
+        { "name": "PORT", "value": "3001" },
+        { "name": "WEB_ORIGIN", "value": "${WEB_ORIGIN}" }
+      ],
+      "secrets": [
+        { "name": "DEV_AUTH_SECRET", "valueFrom": "arn:aws:secretsmanager:${AWS_REGION}:${AWS_ACCOUNT}:secret:gcc-crm/DEV_AUTH_SECRET" },
+        { "name": "APP_ENCRYPTION_KEY", "valueFrom": "arn:aws:secretsmanager:${AWS_REGION}:${AWS_ACCOUNT}:secret:gcc-crm/APP_ENCRYPTION_KEY" },
+        { "name": "SUPABASE_SERVICE_ROLE_KEY", "valueFrom": "arn:aws:secretsmanager:${AWS_REGION}:${AWS_ACCOUNT}:secret:gcc-crm/SUPABASE_SERVICE_ROLE_KEY" },
+        { "name": "DATABASE_URL", "valueFrom": "arn:aws:secretsmanager:${AWS_REGION}:${AWS_ACCOUNT}:secret:gcc-crm/DATABASE_URL" },
+        { "name": "REDIS_URL", "valueFrom": "arn:aws:secretsmanager:${AWS_REGION}:${AWS_ACCOUNT}:secret:gcc-crm/REDIS_URL" },
+        { "name": "OPENAI_API_KEY", "valueFrom": "arn:aws:secretsmanager:${AWS_REGION}:${AWS_ACCOUNT}:secret:gcc-crm/OPENAI_API_KEY" }
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/gcc-crm-api",
+          "awslogs-region": "${AWS_REGION}",
+          "awslogs-stream-prefix": "api"
+        }
+      }
+    }
+  ]
+}

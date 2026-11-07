@@ -1,0 +1,644 @@
+{
+  "migrations": [
+    "0001_init.sql",
+    "0002_phase4.sql",
+    "0003_runtime_reconciliation.sql",
+    "0004_zero_trust_authorization.sql"
+  ],
+  "scope": {
+    "liveDatabaseInspected": false,
+    "counts": {
+      "runtimeRegisteredTables": 85,
+      "sqlDeclaredTables": 111,
+      "runtimeNamesWithoutSqlTable": 0,
+      "sqlTablesNotInRuntimeRegistry": 26,
+      "apiReferencedNamesWithoutSqlTable": 0,
+      "apiReferencedNamesWithoutRegistryEntry": 0,
+      "runtimeNamesWithoutDirectApiCallSite": 5,
+      "declaredTablesWithoutDetectedRls": 0
+    }
+  },
+  "runtimeTables": [
+    "activity_events",
+    "agent_runs",
+    "agent_versions",
+    "agents",
+    "ai_budgets",
+    "ai_conversations",
+    "ai_messages",
+    "api_keys",
+    "appointment_reminders",
+    "appointments",
+    "approvals",
+    "attribution_touches",
+    "audiences",
+    "audit_events",
+    "availability_rules",
+    "booking_pages",
+    "campaign_sends",
+    "campaigns",
+    "channels",
+    "companies",
+    "consents",
+    "contacts",
+    "conversations",
+    "csat_responses",
+    "custom_field_definitions",
+    "custom_field_values",
+    "delivery_receipts",
+    "departments",
+    "dlq_entries",
+    "dsar_requests",
+    "frequency_caps",
+    "gateway_events",
+    "invoice_lines",
+    "invoices",
+    "kb_articles",
+    "knowledge_chunks",
+    "knowledge_documents",
+    "lead_sources",
+    "leads",
+    "memberships",
+    "message_attachments",
+    "message_templates",
+    "messages",
+    "notifications",
+    "nps_responses",
+    "number_sequences",
+    "opportunities",
+    "outbound_webhooks",
+    "payment_links",
+    "pipeline_stages",
+    "pipelines",
+    "portal_accounts",
+    "portal_grants",
+    "products",
+    "provider_accounts",
+    "provider_credentials",
+    "queues",
+    "quote_lines",
+    "quote_versions",
+    "quotes",
+    "resellers",
+    "roles",
+    "routing_rules",
+    "scoring_rules",
+    "segments",
+    "sla_policies",
+    "social_posts",
+    "staff",
+    "suppressions",
+    "tasks",
+    "tax_rate_versions",
+    "team_memberships",
+    "teams",
+    "tenants",
+    "ticket_comments",
+    "tickets",
+    "tool_invocations",
+    "usage_events",
+    "users",
+    "webhook_deliveries",
+    "webhook_events",
+    "workflow_runs",
+    "workflow_steps",
+    "workflow_versions",
+    "workflows"
+  ],
+  "sqlTables": [
+    "activity_events",
+    "agent_runs",
+    "agent_versions",
+    "agents",
+    "ai_budgets",
+    "ai_conversations",
+    "ai_messages",
+    "api_keys",
+    "appointment_reminders",
+    "appointments",
+    "approvals",
+    "associations",
+    "attribution_touches",
+    "audiences",
+    "audit_events",
+    "availability_rules",
+    "booking_pages",
+    "campaign_sends",
+    "campaigns",
+    "channels",
+    "commissions",
+    "companies",
+    "consents",
+    "contacts",
+    "conversations",
+    "csat_responses",
+    "custom_field_definitions",
+    "custom_field_values",
+    "dashboard_widgets",
+    "dashboards",
+    "delivery_receipts",
+    "departments",
+    "dlq_entries",
+    "dsar_requests",
+    "export_jobs",
+    "files",
+    "frequency_caps",
+    "gateway_events",
+    "import_jobs",
+    "integration_logs",
+    "invoice_lines",
+    "invoices",
+    "journey_steps",
+    "kb_articles",
+    "knowledge_chunks",
+    "knowledge_documents",
+    "lead_sources",
+    "leads",
+    "memberships",
+    "message_attachments",
+    "message_templates",
+    "messages",
+    "metric_snapshots",
+    "notifications",
+    "nps_responses",
+    "number_sequences",
+    "opportunities",
+    "outbound_webhooks",
+    "payment_links",
+    "pipeline_stages",
+    "pipelines",
+    "plan_versions",
+    "plans",
+    "platform_memberships",
+    "portal_accounts",
+    "portal_grants",
+    "price_list_items",
+    "price_lists",
+    "products",
+    "provider_accounts",
+    "provider_credentials",
+    "queues",
+    "quote_lines",
+    "quote_versions",
+    "quotes",
+    "report_definitions",
+    "report_runs",
+    "resellers",
+    "roles",
+    "routing_rules",
+    "sales_targets",
+    "scoring_rules",
+    "segments",
+    "sla_policies",
+    "social_posts",
+    "staff",
+    "subscriptions",
+    "support_access_approvals",
+    "support_access_audit",
+    "support_access_requests",
+    "suppressions",
+    "tag_links",
+    "tags",
+    "tasks",
+    "tax_rate_versions",
+    "team_memberships",
+    "teams",
+    "tenant_domains",
+    "tenants",
+    "ticket_comments",
+    "tickets",
+    "tool_invocations",
+    "usage_aggregates",
+    "usage_events",
+    "users",
+    "webhook_deliveries",
+    "webhook_events",
+    "workflow_runs",
+    "workflow_steps",
+    "workflow_versions",
+    "workflows"
+  ],
+  "runtimeOnly": [],
+  "apiReferenceGaps": {
+    "referencedWithoutSqlTable": [],
+    "referencedWithoutRegistry": [],
+    "runtimeNamesWithoutDirectApiCalls": [
+      "departments",
+      "message_attachments",
+      "provider_accounts",
+      "provider_credentials",
+      "teams"
+    ]
+  },
+  "sqlOnly": [
+    {
+      "name": "associations",
+      "disposition": "CRM relationship infrastructure; no direct API table calls found."
+    },
+    {
+      "name": "commissions",
+      "disposition": "Sales compensation schema; no direct API table calls found."
+    },
+    {
+      "name": "dashboard_widgets",
+      "disposition": "Analytics/dashboard infrastructure; no direct API table calls found."
+    },
+    {
+      "name": "dashboards",
+      "disposition": "Analytics/dashboard infrastructure; no direct API table calls found."
+    },
+    {
+      "name": "export_jobs",
+      "disposition": "Import/export infrastructure; no direct API table calls found."
+    },
+    {
+      "name": "files",
+      "disposition": "File metadata infrastructure; no direct API table calls found."
+    },
+    {
+      "name": "import_jobs",
+      "disposition": "Import/export infrastructure; no direct API table calls found."
+    },
+    {
+      "name": "integration_logs",
+      "disposition": "Integration observability infrastructure; no direct API table calls found."
+    },
+    {
+      "name": "journey_steps",
+      "disposition": "Marketing journey schema; no direct API table calls found."
+    },
+    {
+      "name": "metric_snapshots",
+      "disposition": "Analytics aggregation schema; no direct API table calls found."
+    },
+    {
+      "name": "plan_versions",
+      "disposition": "Billing catalogue schema; no direct API table calls found."
+    },
+    {
+      "name": "plans",
+      "disposition": "Billing catalogue schema; no direct API table calls found."
+    },
+    {
+      "name": "platform_memberships",
+      "disposition": "Platform identities, separate from tenant membership roles; no client policy by design."
+    },
+    {
+      "name": "price_list_items",
+      "disposition": "Commerce pricing schema; no direct API table calls found."
+    },
+    {
+      "name": "price_lists",
+      "disposition": "Commerce pricing schema; no direct API table calls found."
+    },
+    {
+      "name": "report_definitions",
+      "disposition": "Analytics/reporting schema; no direct API table calls found."
+    },
+    {
+      "name": "report_runs",
+      "disposition": "Analytics/reporting schema; no direct API table calls found."
+    },
+    {
+      "name": "sales_targets",
+      "disposition": "Sales target schema; no direct API table calls found."
+    },
+    {
+      "name": "subscriptions",
+      "disposition": "Billing schema; no direct API table callers found."
+    },
+    {
+      "name": "support_access_approvals",
+      "disposition": "Independent and tenant-admin approval evidence; server-only until support workflow is integrated."
+    },
+    {
+      "name": "support_access_audit",
+      "disposition": "Append-only support-access audit trail; server-only until trusted workflow integration."
+    },
+    {
+      "name": "support_access_requests",
+      "disposition": "Bounded support-access request and grant state; no client policy by design."
+    },
+    {
+      "name": "tag_links",
+      "disposition": "CRM tagging schema; no direct API table calls found."
+    },
+    {
+      "name": "tags",
+      "disposition": "CRM tagging schema; no direct API table calls found."
+    },
+    {
+      "name": "tenant_domains",
+      "disposition": "Tenant-domain schema with RLS policy added in 0003."
+    },
+    {
+      "name": "usage_aggregates",
+      "disposition": "Billing/analytics aggregation schema; no direct API table calls found."
+    }
+  ],
+  "tablesWithoutDetectedRls": [],
+  "apiReferencesByTable": {
+    "activity_events": [
+      "apps/api/src/common/tenancy.service.ts",
+      "apps/api/src/platform.module.ts"
+    ],
+    "agent_runs": [
+      "apps/api/src/ai.module.ts"
+    ],
+    "agent_versions": [
+      "apps/api/src/ai.module.ts"
+    ],
+    "agents": [
+      "apps/api/src/ai.module.ts"
+    ],
+    "ai_budgets": [
+      "apps/api/src/ai.module.ts"
+    ],
+    "ai_conversations": [
+      "apps/api/src/ai.module.ts"
+    ],
+    "ai_messages": [
+      "apps/api/src/ai.module.ts"
+    ],
+    "api_keys": [
+      "apps/api/src/common/auth.ts",
+      "apps/api/src/platform.module.ts"
+    ],
+    "appointment_reminders": [
+      "apps/api/src/scheduling.module.ts"
+    ],
+    "appointments": [
+      "apps/api/src/scheduling.module.ts"
+    ],
+    "approvals": [
+      "apps/api/src/ai.module.ts",
+      "apps/api/src/sales.module.ts"
+    ],
+    "attribution_touches": [
+      "apps/api/src/marketing.module.ts"
+    ],
+    "audiences": [
+      "apps/api/src/marketing.module.ts"
+    ],
+    "audit_events": [
+      "apps/api/src/common/tenancy.service.ts",
+      "apps/api/src/ops.module.ts"
+    ],
+    "availability_rules": [
+      "apps/api/src/scheduling.module.ts"
+    ],
+    "booking_pages": [
+      "apps/api/src/scheduling.module.ts"
+    ],
+    "campaign_sends": [
+      "apps/api/src/marketing.module.ts"
+    ],
+    "campaigns": [
+      "apps/api/src/marketing.module.ts"
+    ],
+    "channels": [
+      "apps/api/src/inbox.module.ts"
+    ],
+    "companies": [
+      "apps/api/src/crm.module.ts",
+      "apps/api/src/sales.module.ts"
+    ],
+    "consents": [
+      "apps/api/src/inbox.module.ts",
+      "apps/api/src/marketing.module.ts"
+    ],
+    "contacts": [
+      "apps/api/src/ai.module.ts",
+      "apps/api/src/crm.module.ts",
+      "apps/api/src/leads.module.ts",
+      "apps/api/src/marketing.module.ts",
+      "apps/api/src/platform.module.ts",
+      "apps/api/src/sales.module.ts",
+      "apps/api/src/service.module.ts",
+      "apps/api/src/workflow.module.ts"
+    ],
+    "conversations": [
+      "apps/api/src/inbox.module.ts",
+      "apps/api/src/marketing.module.ts"
+    ],
+    "csat_responses": [
+      "apps/api/src/service.module.ts"
+    ],
+    "custom_field_definitions": [
+      "apps/api/src/crm.module.ts",
+      "apps/api/src/platform.module.ts"
+    ],
+    "custom_field_values": [
+      "apps/api/src/crm.module.ts"
+    ],
+    "delivery_receipts": [
+      "apps/api/src/inbox.module.ts"
+    ],
+    "dlq_entries": [
+      "apps/api/src/inbox.module.ts",
+      "apps/api/src/platform.module.ts",
+      "apps/api/src/workflow.module.ts"
+    ],
+    "dsar_requests": [
+      "apps/api/src/platform.module.ts"
+    ],
+    "frequency_caps": [
+      "apps/api/src/marketing.module.ts"
+    ],
+    "gateway_events": [
+      "apps/api/src/commerce.module.ts"
+    ],
+    "invoice_lines": [
+      "apps/api/src/commerce.module.ts"
+    ],
+    "invoices": [
+      "apps/api/src/commerce.module.ts",
+      "apps/api/src/service.module.ts"
+    ],
+    "kb_articles": [
+      "apps/api/src/service.module.ts"
+    ],
+    "knowledge_chunks": [
+      "apps/api/src/ai.module.ts"
+    ],
+    "knowledge_documents": [
+      "apps/api/src/ai.module.ts"
+    ],
+    "lead_sources": [
+      "apps/api/src/leads.module.ts",
+      "apps/api/src/social.module.ts"
+    ],
+    "leads": [
+      "apps/api/src/leads.module.ts",
+      "apps/api/src/marketing.module.ts",
+      "apps/api/src/platform.module.ts",
+      "apps/api/src/social.module.ts"
+    ],
+    "memberships": [
+      "apps/api/src/app.module.ts",
+      "apps/api/src/common/auth.ts",
+      "apps/api/src/common/tenancy.service.ts",
+      "apps/api/src/ops.module.ts",
+      "apps/api/src/platform.module.ts",
+      "apps/api/src/workflow.module.ts"
+    ],
+    "message_templates": [
+      "apps/api/src/marketing.module.ts"
+    ],
+    "messages": [
+      "apps/api/src/inbox.module.ts",
+      "apps/api/src/marketing.module.ts"
+    ],
+    "notifications": [
+      "apps/api/src/ai.module.ts",
+      "apps/api/src/ops.module.ts",
+      "apps/api/src/service.module.ts",
+      "apps/api/src/workflow.module.ts"
+    ],
+    "nps_responses": [
+      "apps/api/src/service.module.ts"
+    ],
+    "number_sequences": [
+      "apps/api/src/service.module.ts"
+    ],
+    "opportunities": [
+      "apps/api/src/ai.module.ts",
+      "apps/api/src/leads.module.ts",
+      "apps/api/src/marketing.module.ts",
+      "apps/api/src/sales.module.ts"
+    ],
+    "outbound_webhooks": [
+      "apps/api/src/platform.module.ts"
+    ],
+    "payment_links": [
+      "apps/api/src/commerce.module.ts"
+    ],
+    "pipeline_stages": [
+      "apps/api/src/ai.module.ts",
+      "apps/api/src/common/tenancy.service.ts",
+      "apps/api/src/leads.module.ts",
+      "apps/api/src/platform.module.ts",
+      "apps/api/src/sales.module.ts"
+    ],
+    "pipelines": [
+      "apps/api/src/common/tenancy.service.ts",
+      "apps/api/src/platform.module.ts",
+      "apps/api/src/sales.module.ts"
+    ],
+    "portal_accounts": [
+      "apps/api/src/common/auth.ts",
+      "apps/api/src/service.module.ts"
+    ],
+    "portal_grants": [
+      "apps/api/src/service.module.ts"
+    ],
+    "products": [
+      "apps/api/src/commerce.module.ts"
+    ],
+    "queues": [
+      "apps/api/src/service.module.ts"
+    ],
+    "quote_lines": [
+      "apps/api/src/sales.module.ts"
+    ],
+    "quote_versions": [
+      "apps/api/src/sales.module.ts"
+    ],
+    "quotes": [
+      "apps/api/src/sales.module.ts"
+    ],
+    "resellers": [
+      "apps/api/src/platform.module.ts"
+    ],
+    "roles": [
+      "apps/api/src/common/auth.ts"
+    ],
+    "routing_rules": [
+      "apps/api/src/leads.module.ts"
+    ],
+    "scoring_rules": [
+      "apps/api/src/leads.module.ts"
+    ],
+    "segments": [
+      "apps/api/src/crm.module.ts",
+      "apps/api/src/marketing.module.ts"
+    ],
+    "sla_policies": [
+      "apps/api/src/service.module.ts"
+    ],
+    "social_posts": [
+      "apps/api/src/social.module.ts"
+    ],
+    "staff": [
+      "apps/api/src/scheduling.module.ts"
+    ],
+    "suppressions": [
+      "apps/api/src/inbox.module.ts",
+      "apps/api/src/marketing.module.ts"
+    ],
+    "tasks": [
+      "apps/api/src/ops.module.ts",
+      "apps/api/src/workflow.module.ts"
+    ],
+    "tax_rate_versions": [
+      "apps/api/src/commerce.module.ts"
+    ],
+    "team_memberships": [
+      "apps/api/src/common/auth.ts"
+    ],
+    "tenants": [
+      "apps/api/src/app.module.ts",
+      "apps/api/src/common/auth.ts",
+      "apps/api/src/platform.module.ts"
+    ],
+    "ticket_comments": [
+      "apps/api/src/platform.module.ts",
+      "apps/api/src/service.module.ts"
+    ],
+    "tickets": [
+      "apps/api/src/platform.module.ts",
+      "apps/api/src/service.module.ts"
+    ],
+    "tool_invocations": [
+      "apps/api/src/ai.module.ts"
+    ],
+    "usage_events": [
+      "apps/api/src/ai.module.ts",
+      "apps/api/src/common/tenancy.service.ts"
+    ],
+    "users": [
+      "apps/api/src/app.module.ts",
+      "apps/api/src/platform.module.ts"
+    ],
+    "webhook_deliveries": [
+      "apps/api/src/platform.module.ts"
+    ],
+    "webhook_events": [
+      "apps/api/src/inbox.module.ts"
+    ],
+    "workflow_runs": [
+      "apps/api/src/workflow.module.ts"
+    ],
+    "workflow_steps": [
+      "apps/api/src/workflow.module.ts"
+    ],
+    "workflow_versions": [
+      "apps/api/src/workflow.module.ts"
+    ],
+    "workflows": [
+      "apps/api/src/workflow.module.ts"
+    ]
+  },
+  "sourceFindingsMitigatedByLatestMigration": [
+    "0003 replaces the permissive audit_events insert policy with a tenant check.",
+    "0003 adds RLS to resellers, roles, tenant_domains and webhook_events.",
+    "0004 separates platform identities and adds bounded, client-denied support-access records.",
+    "0004 adds tenant departments, teams, team memberships and nullable resource scope columns."
+  ],
+  "validation": {
+    "runtimeSqlContract": "source check; no runtime table name or API literal reference is missing SQL.",
+    "migrationParsing": "PostgreSQL grammar parser used locally; does not execute migrations.",
+    "localPostgres": "not run; Docker/Podman unavailable.",
+    "liveStaging": "not inspected or modified."
+  }
+}

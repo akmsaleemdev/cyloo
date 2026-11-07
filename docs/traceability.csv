@@ -1,0 +1,111 @@
+req_id,module,requirement,artifact/implementation,test,status
+P0-01,all,PRD covers all 21 modules A–U with entities+acceptance,docs/gcccrm/PRD.md,-,delivered
+P0-02,all,Architecture + ADRs 0003..0007,docs/gcccrm/ARCHITECTURE.md,-,delivered
+P0-03,all,ERD + schema + RLS migration covering all listed entities,db/supabase/migrations/0001_init.sql,pgTAP plan (blocked on DB),delivered
+P0-04,all,Threat model STRIDE + ASVS mapping,docs/gcccrm/threat-model.md,-,delivered
+P0-05,D/G/H/O,Integration capability matrix with honest blocked states,docs/gcccrm/integration-capability-matrix.md,-,delivered
+P0-06,web,UI design system tokens + sitemap + RTL,docs/gcccrm/UI-SITEMAP.md;gcc-crm/apps/web,-,delivered
+P0-07,all,Phased backlog w/ acceptance criteria,docs/gcccrm/BACKLOG.md,-,delivered
+P0-08,all,Test strategy incl. blocked layers,docs/gcccrm/TEST-STRATEGY.md,-,delivered
+P0-09,all,Traceability matrix,docs/gcccrm/traceability.csv,-,delivered
+P1-01,Q,Signup creates tenant+owner+membership atomically,gcc-crm/apps/api tenancy,e2e tenancy,implemented+tested
+P1-02,Q,Plan entitlements gate module APIs,core/entitlements,e2e entitlement 403,implemented+tested
+P1-03,Q,Usage metering rows for metered actions,api metering hook,unit,implemented+tested
+P1-04,U,RBAC deny-by-default w/ owner override,core/rbac,e2e rbac 403/200,implemented+tested
+P1-05,U,Cross-tenant access impossible (404 no leak),api tenancy guard,e2e isolation,implemented+tested
+P1-06,U,Immutable audit + activity events,api timeline/audit modules,e2e append-only,implemented+tested
+P1-07,A,Contacts/companies CRUD + association + timeline,api crm modules,e2e,implemented+tested
+P1-08,A,Custom fields validated against definitions,core schemas,e2e,implemented+tested
+P1-09,A,Dedupe unique per tenant + merge preserves history,api crm merge,e2e,implemented+tested
+P1-10,A,Segmentation saved filters + CSV export,api crm,e2e export,implemented+tested
+P1-11,B,Lead capture with UTM attribution + dedupe,api leads,e2e,implemented+tested
+P1-12,B,Round-robin routing + scoring rules,api leads,e2e scoring/routing,implemented+tested
+P1-13,B,Convert lead → contact+opportunity idempotent,api leads convert,e2e idempotency,implemented+tested
+P1-14,C,Multi-pipeline stages + kanban move validation,api pipelines,e2e,implemented+tested
+P1-15,C,Forecast = Σ weighted open opportunities,api forecast,e2e math,implemented+tested
+P1-16,C,Quote totals server-computed; discount approval gate,api quotes+approvals,e2e approval,implemented+tested
+P1-17,L,Tasks CRUD + assignment + notification,api tasks,e2e,implemented+tested
+P1-18,S,Money minor units w/ KWD/BHD/OMR 3dp,core/money,unit vectors,implemented+tested
+P1-19,S,Locale EN/AR + RTL + business calendar pattern,web tokens+api calendar,build+unit,partial (chrome done; full AR copy staged)
+P1-20,web,Next.js shell + login + dashboard + contacts + deals,apps/web,next build,e2e build gate,partial (build green; interactive tests staged)
+P1-21,db,RLS migration + isolation test plan,db/supabase/migrations/0001_init.sql,pgTAP at cutover,delivered (run blocked)
+P2-01,D,Canonical conversation/message model across channels,apps/api/src/inbox.module.ts,e2e inbox,implemented+tested
+P2-02,D,Webhook ingest: verify→durable persist→dedupe→retry/DLQ,WebhookController+QueueService (ADR-0008),e2e dedupe+invalid-sig,implemented+tested
+P2-03,D,Provider-event dedupe creates one message,webhook_events unique + message-level dedupe,e2e duplicate+replay,implemented+tested
+P2-04,D,Delivery receipts forward-only (out-of-order safe),dispatch status rank,e2e read-before-delivered,implemented+tested
+P2-05,D,Web chat adapter fully operational (widget key auth),webchat channel,e2e inbound+reply,implemented+tested
+P2-06,D,Capability descriptors + unconfigured states,CHANNEL_CAPABILITIES,e2e list+instagram,implemented+tested
+P2-07,D,Outbound gates: status→consent→suppression,MessagingService.sendReply,e2e CONSENT_REQUIRED+SUPPRESSED,implemented+tested
+P2-08,D,Human takeover pauses automation + close,conversations mode/close,e2e takeover+closed 409,implemented+tested
+P2-09,S/U,Consent ledger with evidence + audit,ConsentsController,e2e opt_in,implemented+tested
+P2-10,S/U,Suppression list per channel,SuppressionsController,e2e,implemented+tested
+P2-11,Q,Usage metering on sends,tenancy.meter,e2e indirect,implemented
+P2-12,web,Inbox split-pane UI + channels UI,apps/web inbox+channels,next build,build-verified
+P3-01,E,Agent registry with versioned prompts + tool allowlists,ai.module agents/versions,e2e create/list,implemented+tested
+P3-02,E,Tools re-verify caller permissions server-side,AiService.execTool,e2e honest denial (marketer),implemented+tested
+P3-03,E,External actions approval-bound to payload hash,external.send_email,e2e approve→send cycle,implemented+tested
+P3-04,E,Per-tenant AI budget (plan-capped + override),ai/budget + chat gate,e2e AI_BUDGET_EXCEEDED,implemented+tested
+P3-05,E,Tenant-scoped RAG retrieval with citations,AiService.retrieve,e2e search+isolation,implemented+tested
+P3-06,E,Knowledge revocation removes retrieval,knowledge revoke,e2e,implemented+tested
+P3-07,E,Injection resistance (retrieved text ≠ instructions),deterministic router + eval,e2e injection test,implemented+tested
+P3-08,E,Honest failure reporting (no fabricated answers),chat error path,e2e denial text,implemented+tested
+P3-09,E,Human handoff notifications,handoff.to_human,e2e,implemented+tested
+P3-10,E,Chat history persisted,ai_conversations/ai_messages,e2e,implemented+tested
+P3-11,I,Staff + availability + booking pages,scheduling.module,e2e,implemented+tested
+P3-12,I,GCC timezone slots (fixed offsets, no DST),slotsFor,e2e 06:00Z=09:00 Riyadh,implemented+tested
+P3-13,I,Double-booking prevented under concurrency,assertFree in serialized tx,e2e [201,409],implemented+tested
+P3-14,I,Cancel frees slot; reschedule validates overlap,e2e,e2e,implemented+tested
+P3-15,I,No-show flagging + audit trail,e2e,e2e,implemented+tested
+P3-16,I,Queued reminders (24h/1h),addReminders,e2e count,implemented+tested
+P3-17,I,Non-GCC timezones rejected (declared scope),TZ_OFFSET_HOURS,e2e 400,implemented+tested
+P3-18,web,AI Studio + Knowledge + Bookings UI,apps/web,next build,build-verified
+P4-01,K,Versioned workflow definitions (runs pin version),workflow.module,e2e v1 run kept after v2,implemented+tested
+P4-02,K,Domain-event triggers (contact/lead/opportunity),common/events + emitters,e2e matched runs,implemented+tested
+P4-03,K,Idempotent replay (no second run),idempotency_key,e2e duplicate flag,implemented+tested
+P4-04,K,Branch conditions gate downstream steps,condition steps,e2e cold/hot lead,implemented+tested
+P4-05,K,Retry then DLQ on failing step,webhook_out + dlq_entries,e2e dead x2 attempt,implemented+tested
+P4-06,K,Dry-run plan with zero side effects,dry-run,e2e,implemented+tested
+P4-07,F,Campaign per-recipient consent gate,MarketingService.send,e2e skipped_no_consent,implemented+tested
+P4-08,F,Suppression re-checked at send time,send gate,e2e,implemented+tested
+P4-09,F,Frequency caps per contact/channel/window,frequency_caps,e2e skipped_frequency_cap,implemented+tested
+P4-10,F,A/B variant split across recipients,variants,e2e 2 campaigns used,implemented+tested
+P4-11,F,Template rendering per recipient,{{first_name}},e2e,implemented+tested
+P4-12,F,Attribution touches on send,attribution_touches,e2e indirect,implemented
+P4-13,M,Funnel from recorded leads/opportunities,analytics/funnel,e2e counts+amount,implemented+tested
+P4-14,M,Sales performance per owner,analytics/sales-performance,e2e,implemented+tested
+P4-15,M,Campaign analytics + response times,analytics/*,e2e,implemented+tested
+P4-16,web,Workflows + Campaigns + Reports UI,apps/web,next build,build-verified
+P5-01,J,Tickets with priority/queues,service.module,e2e create,implemented+tested
+P5-02,J,SLA due on sun_thu/mon_fri calendar (GCC offsets),slaDue(),e2e due-date window,implemented+tested
+P5-03,J,First-response SLA hit tracking,replies,e2e,implemented+tested
+P5-04,J,Idempotent breach escalation sweep,sla/sweep,e2e escalated_now 0 on rerun,implemented+tested
+P5-05,J,Resolve/reopen with history,e2e,e2e,implemented+tested
+P5-06,J,CSAT once per resolved ticket + NPS + summary,csat/nps/satisfaction,e2e,implemented+tested
+P5-07,J,Portal accounts/grants; granted-only API; ungranted==404,portal controllers,e2e isolation,implemented+tested
+P5-08,J,Portal token guard (fresh account resolution),auth.ts portal branch,e2e,implemented+tested
+P5-09,N,Verified tax rate gate (source_url+verified_on),tax-rates,e2e NO_TAX_RATE 422,implemented+tested
+P5-10,N,Server-computed totals incl. KWD 3dp,computeTotals,e2e 100.250 KWD,implemented+tested
+P5-11,N,Invoice state machine (draft→issued→paid; void draft only),e2e,e2e,implemented+tested
+P5-12,N,Signed gateway webhook: dedupe + partial/full + tamper reject,payments/webhook,e2e,implemented+tested
+P5-13,G,Content approval state machine + audit,social transitions,e2e,implemented+tested
+P5-14,G,Provider publish refused (unconfigured); sandbox double labelled,e2e,e2e,implemented+tested
+P5-15,H,Ads lead-form ingest with attribution + dedupe,ads/lead-forms,e2e,implemented+tested
+P5-16,H,Connector registry honest unconfigured states,ads/accounts,e2e,implemented+tested
+P5-17,web,Service desk + Commerce UI,apps/web,next build,build-verified
+P5-18,db,Phase 5 tables in SQL migration,0001_init (service/commerce tables),pgTAP at cutover,delivered
+P6-01,R,API keys hashed at rest; raw shown once,platform api-keys,e2e,implemented+tested
+P6-02,R,Key-authenticated M2M calls with stored roles,guard gck_ branch,e2e scoped call + 403,implemented+tested
+P6-03,R,Immediate revocation,guard fresh resolution,e2e revoked 401,implemented+tested
+P6-04,R,Outbound webhooks SSRF-guarded (loopback/private rejected),assertPublicUrl,e2e 400s,implemented+tested
+P6-05,R,Signed delivery with retry→DLQ (honest offline failure),deliver(),e2e failed+attempts 2,implemented+tested
+P6-06,U,DSAR export (data portability),dsar process,e2e export payload,implemented+tested
+P6-07,U,DSAR delete = anonymization + audit,dsar process,e2e REDACTED,implemented+tested
+P6-08,U,Retention sweep with dry-run,retention/sweep,e2e,implemented+tested
+P6-09,Q,Reseller provisioning of child tenants (atomic),resellers/:id/tenants,e2e,implemented+tested
+P6-10,Q,White-label branding settings,platform/branding,e2e,implemented+tested
+P6-11,T,Industry packs: 7 GCC verticals,INDUSTRY_PACKS activate,e2e fields+pipeline+idempotent,implemented+tested
+P6-12,hard,Rate limiting on credential endpoints,checkRate,e2e (manual smoke),implemented
+P6-13,hard,Security headers,main.ts middleware,manual smoke,implemented
+P6-14,hard,DR backup/restore drill verified by suite,store snapshot/restore,e2e rows restored,implemented+tested
+P6-15,hard,Load probe (dev-store),scripts/load.mjs,run evidence in report,implemented+run
+P6-16,web,Platform & Developer UI,apps/web platform,next build,build-verified

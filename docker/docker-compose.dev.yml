@@ -1,0 +1,46 @@
+# Local development services for the production stack (see docs/ADR-0002).
+# The runnable reference implementation in app/ does NOT need these; this
+# compose file supports the pnpm/Turborepo workspace in scaffold/ when the
+# team migrates to PostgreSQL + Redis + OpenSearch.
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: bmssys
+      POSTGRES_PASSWORD: bmssys_dev_only
+      POSTGRES_DB: bmssys
+    ports: ["5432:5432"]
+    volumes: [pgdata:/var/lib/postgresql/data]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U bmssys"]
+      interval: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    command: ["redis-server", "--appendonly", "yes"]
+    ports: ["6379:6379"]
+    volumes: [redisdata:/data]
+
+  opensearch:
+    image: opensearchproject/opensearch:2.17.1
+    environment:
+      discovery.type: single-node
+      DISABLE_SECURITY_PLUGIN: "true"
+      OPENSEARCH_JAVA_OPTS: -Xms512m -Xmx512m
+    ports: ["9200:9200"]
+    volumes: [osdata:/usr/share/opensearch/data]
+
+  ai-service:
+    build:
+      context: ..
+      dockerfile: docker/ai-service.Dockerfile
+    ports: ["8100:8100"]
+    environment:
+      AI_TIMEOUT_SECONDS: ${AI_TIMEOUT_SECONDS:-30}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+
+volumes:
+  pgdata:
+  redisdata:
+  osdata:

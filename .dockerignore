@@ -1,0 +1,15 @@
+.git
+.mimosa
+**/.temp
+node_modules
+**/node_modules
+**/.next
+**/dist
+**/dist-cjs
+**/coverage
+**/__pycache__
+**/.pytest_cache
+.env
+.env.*
+**/.env
+**/.env.*

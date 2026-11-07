@@ -1,0 +1,51 @@
+name: gcc-crm CI
+on:
+  push:
+    branches: [main]
+    paths: ["apps/**", "packages/**", "workers/**", "docker/**", "infrastructure/**", "scripts/**", "docs/**", "reports/**", "package.json", "package-lock.json", ".github/workflows/ci.yml"]
+  pull_request:
+    paths: ["apps/**", "packages/**", "workers/**", "docker/**", "scripts/**", "docs/**", "reports/**", "package.json", "package-lock.json"]
+  workflow_call: {}   # reusable by aws-deploy.yml
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - name: Install (lockfile, audited)
+        working-directory: .
+        run: |
+          npm ci || npm install --no-audit --no-fund
+          npm audit --audit-level=critical || true   # report, gate in P6
+      - name: Build shared (dual ESM/CJS)
+        working-directory: ./packages/shared
+        run: npm run build
+      - name: Unit tests — shared
+        working-directory: ./packages/shared
+        run: npm test
+      - name: Runtime-to-SQL schema contract
+        run: npm run check:schema
+      - name: Start local Supabase database
+        run: npx supabase start --workdir packages/database
+      - name: Apply migrations to fresh local database
+        run: npx supabase db reset --workdir packages/database
+      - name: PostgreSQL RLS tests
+        run: npx supabase test db --workdir packages/database
+      - name: Typecheck + e2e — API (tenant isolation, RBAC, domain flows)
+        working-directory: ./apps/api
+        run: |
+          npx tsc -p tsconfig.json --noEmit
+          npm test
+      - name: Build — web
+        working-directory: ./apps/web
+        run: npm run build
+      - name: Secret scan (no committed credentials)
+        run: "! grep -rEn '(sk-[A-Za-z0-9]{20}|Password!|Passw0rd)' apps packages --include='*.ts' --include='*.tsx'"
+      - name: Stop local Supabase
+        if: always()
+        run: npx supabase stop --workdir packages/database --no-backup

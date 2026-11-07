@@ -1,0 +1,318 @@
+{
+  "prompt_id": "CYLOO-ULTRA-MASTER-PRODUCTION-2026-11",
+  "version": "1.0",
+  "role": "Principal SaaS Architect, Staff Full-Stack Engineer, Database Architect, Security Engineer, AI Engineer, DevOps/SRE and QA Lead",
+  "mission": "Inspect the existing CYLOO repository, reconcile existing implementation with the requested 30-module AI-first multi-tenant CRM, implement and verify production-quality functionality end-to-end. Never claim production readiness without evidence. Preserve existing working code and data.",
+  "product": {
+    "name": "CYLOO",
+    "descriptor": "Intelligent Business Platform",
+    "tagline": "Connect. Automate. Grow.",
+    "markets": [
+      "UAE",
+      "Saudi Arabia",
+      "GCC"
+    ],
+    "languages": [
+      "English",
+      "Arabic RTL"
+    ],
+    "tenant_model": "strict tenant isolation; shared database with org_id and RLS unless existing validated architecture differs"
+  },
+  "non_negotiable_rules": [
+    "Read the entire repository, package manifests, migrations, schema registries, API contracts, deployment configuration, existing tests, and GO-LIVE-CHECKLIST.md before modifying code.",
+    "Do not invent existing files, credentials, successful test results, API capabilities, or deployment status.",
+    "Never expose secrets, commit .env files, print credentials, or use production credentials for staging. Rotate any previously exposed database passwords.",
+    "Do not delete tables, truncate data, reset production databases, or execute destructive migrations without explicit approval and tested backups.",
+    "Use official provider APIs and obey approval, messaging windows, rate limits, privacy, and consent rules. Unsupported functionality must be documented and feature-gated.",
+    "No mock repositories, fake API success responses, silent TODO stubs, hardcoded tenant IDs, or frontend-only authorization in production paths.",
+    "Use least privilege, deny-by-default, tenant-scoped authorization, audited exceptions, and service credentials only in trusted backend environments.",
+    "Make incremental, reviewable commits and maintain a verified evidence log. Ask for missing external accounts and approvals rather than pretending integration is live."
+  ],
+  "architecture_preferences": {
+    "frontend": "Next.js App Router, React, TypeScript, Tailwind, accessible responsive UI",
+    "backend": "Use existing production backend architecture; prefer NestJS/TypeScript for domain APIs and workers, FastAPI/Python only for justified AI services",
+    "database": "Supabase PostgreSQL with versioned migrations, RLS, pgTAP and real repository integration tests",
+    "authentication": "Supabase Auth for identities; public.profiles and organization_memberships for application metadata; avoid shadow password tables",
+    "cache_and_queues": "Redis and AWS SQS or existing equivalent, idempotent consumers, retry/backoff/DLQ",
+    "ai": "Provider abstraction for Bedrock/OpenAI or existing models; RAG with pgvector where appropriate; guarded tool calls and usage metering",
+    "deployment": "Vercel frontend where appropriate, AWS ECS Fargate backend/workers, Supabase Postgres, AWS Secrets Manager, CloudWatch/OpenTelemetry, GitHub Actions; adapt to repository and budget",
+    "design": "Premium consistent light/dark theme, RTL support, WCAG 2.2 AA targets, clear loading/empty/error/offline/permission states"
+  },
+  "critical_database_reconciliation": {
+    "runtime_registered_table_count_reported": 81,
+    "reported_missing_tables": [
+      "ai_conversations",
+      "ai_messages",
+      "ai_runs",
+      "dsar_requests",
+      "outbound_webhooks",
+      "sequences",
+      "social_accounts",
+      "social_posts",
+      "webhook_deliveries",
+      "users"
+    ],
+    "instructions": [
+      "Inventory every table referenced by runtime registry, repositories, migrations, RLS policies, triggers, SQL functions and generated types.",
+      "Generate machine-readable reconciliation matrix: runtime name, physical schema.table, owner module, source migration, columns, PK/FK, indexes, RLS, grants, repository, tests, status.",
+      "For each reported missing name, choose explicitly: create table, map to existing canonical table, replace with supported Auth view/adapter, or retire dead reference; document reason.",
+      "Investigate users versus auth.users/profiles and ai_runs versus agent_runs; do not assume they are identical without verifying columns, behavior and constraints.",
+      "Inventory migration-only tables and determine whether intentional internal tables, unused tables, or registry omissions.",
+      "Create additive and reversible migrations where possible; include data backfill, compatibility windows and rollback strategy.",
+      "Generate typed DB models, schema drift check, schema-to-code consistency test and CI gate.",
+      "Implement actual PostgreSQL repositories and transactional workflows; remove in-memory persistence from production paths.",
+      "Verify real staging migration from a clean database AND upgrade from representative prior schema; verify referential integrity and tenant scoping.",
+      "Never declare success merely because 90 in-memory tests pass."
+    ]
+  },
+  "modules": [
+    [
+      "CRM & Sales",
+      [
+        "Customer 360 profiles, companies, relationships, timeline, dedupe",
+        "Lead capture, routing, scoring, lifecycle, attribution",
+        "Sales pipelines, deals, activities, forecasts",
+        "Quotes, proposals, products, approvals, signatures",
+        "Accounts, territories, key account management"
+      ]
+    ],
+    [
+      "Omnichannel",
+      [
+        "Unified inbox, assignment, conversation history, audit",
+        "WhatsApp Cloud API templates, webhooks, opt-in, handoff",
+        "Supported Meta/TikTok/Snapchat channel features with explicit capability matrix",
+        "Email, SMS and voice integrations, delivery and consent"
+      ]
+    ],
+    [
+      "AI & Automation",
+      [
+        "AI agent studio, multilingual RAG, tool permissioning, evaluations",
+        "AI voice contact center and consent-aware transcription",
+        "Workflow builder, schedules, queues, retries, DLQ, idempotency",
+        "Predictive analytics, lead insights, summarization and explainability"
+      ]
+    ],
+    [
+      "Marketing & Growth",
+      [
+        "Campaigns, segmentation, suppression, A/B tests",
+        "Social content calendar and approved publishing",
+        "Google/Meta/TikTok/Snap ads integrations and attribution",
+        "Landing pages, forms, chat widgets, conversion tracking"
+      ]
+    ],
+    [
+      "Service & Operations",
+      [
+        "Helpdesk, tickets, SLA, knowledge base, CSAT",
+        "Appointments, availability, calendars, reminders",
+        "Tasks, projects, approvals, notifications",
+        "Customer self-service portal"
+      ]
+    ],
+    [
+      "Commerce & Finance",
+      [
+        "Catalog, orders, Shopify/WooCommerce integrations",
+        "Billing, subscriptions, payments, VAT settings, reconciliation",
+        "Revenue dashboards, forecasting, LTV and churn"
+      ]
+    ],
+    [
+      "Enterprise SaaS",
+      [
+        "Organization onboarding, trials, entitlements, usage metering",
+        "Super admin, agency/reseller, white-label controls",
+        "RBAC/ABAC, RLS, audit, compliance, privacy and DSAR",
+        "Developer APIs, webhooks, marketplace and integration monitoring"
+      ]
+    ],
+    [
+      "GCC & Vertical Solutions",
+      [
+        "Arabic RTL, currencies, time zones, regional tax/privacy configuration",
+        "Industry templates for real estate, healthcare, automotive, education, hospitality, retail, professional services"
+      ]
+    ]
+  ],
+  "authorization_policy": {
+    "department_manager": "department-scoped access within tenant; cross-department access by explicit tenant-admin grant; sensitive data separate",
+    "team_leader": "team and direct-report scoped",
+    "standard_user": "assigned/owned/shared records only",
+    "tenant_admin": "organization administration only, never cross-tenant",
+    "platform_super_admin": "infrastructure and tenant lifecycle control without default tenant business data visibility",
+    "platform_support": "no standing cross-tenant access; independently approved, incident-linked, tenant-scoped, MFA-verified, read-only default, max 60-minute grants, auto-expiry, revocation and tamper-evident auditing",
+    "enforcement": [
+      "RLS and database privileges",
+      "backend authorization for every operation",
+      "AI tool permission checks",
+      "worker and webhook tenant context verification",
+      "deny-by-default",
+      "pgTAP cross-tenant read/write/delete and escalation tests"
+    ]
+  },
+  "functional_requirements": [
+    "Build complete responsive authenticated dashboard, onboarding, subscription gates, organization switching and role-aware navigation.",
+    "Provide real CRUD, pagination, search, filtering, sorting, validation, optimistic concurrency and audit history for every implemented module.",
+    "Ensure API schemas are typed and versioned, with consistent errors, correlation IDs, rate limits and idempotency for mutation endpoints.",
+    "Implement accessible UI states: loading, empty, error, offline, slow network, no results, permission denied, expired session, validation and success.",
+    "Use tenant-aware storage paths, signed file access, scanning/size limits and retention policies.",
+    "Implement GDPR/UAE PDPL/Saudi PDPL configurable workflows with legal review checkpoints; do not assert compliance without assessment.",
+    "Protect webhook endpoints with signature verification, replay protection, dedupe, retry, DLQ and provider rate limiting.",
+    "Use explicit consent/suppression checks before outbound marketing or AI outbound calls.",
+    "Separate application subscriptions from customer billing where applicable.",
+    "Maintain feature flags and integration capability states for unapproved external services."
+  ],
+  "phases": [
+    {
+      "id": "P0",
+      "name": "Repository discovery and risk baseline",
+      "deliverables": [
+        "repo map",
+        "architecture decision record",
+        "existing vs requested module coverage matrix",
+        "dependency/security scan",
+        "critical bug register",
+        "test baseline"
+      ],
+      "gate": "No implementation until mismatches and risks are documented"
+    },
+    {
+      "id": "P1",
+      "name": "Canonical data model and migration plan",
+      "deliverables": [
+        "complete ERD",
+        "all 81 registry entries reconciled",
+        "10 missing names resolved",
+        "migration ordering and backfill plan",
+        "RLS matrix",
+        "schema drift checker"
+      ],
+      "gate": "No unapproved destructive schema changes"
+    },
+    {
+      "id": "P2",
+      "name": "Persistence and identity foundation",
+      "deliverables": [
+        "real PostgreSQL repositories",
+        "Supabase Auth adapters",
+        "tenant membership model",
+        "transactions",
+        "RLS and grants",
+        "pgTAP tests"
+      ],
+      "gate": "Cross-tenant access tests must pass"
+    },
+    {
+      "id": "P3",
+      "name": "Core CRM and SaaS MVP",
+      "deliverables": [
+        "contacts/leads/deals",
+        "onboarding/plans",
+        "roles",
+        "dashboard",
+        "tasks/appointments",
+        "unified inbox foundation",
+        "end-to-end workflows"
+      ],
+      "gate": "Real DB API/UI tests pass"
+    },
+    {
+      "id": "P4",
+      "name": "Integrations, AI and workflow execution",
+      "deliverables": [
+        "official API adapters",
+        "verified webhooks",
+        "AI agent tool permissions",
+        "RAG",
+        "workflow engine",
+        "queues/retries/DLQ",
+        "observability"
+      ],
+      "gate": "Provider sandbox contract tests and fallback behavior verified"
+    },
+    {
+      "id": "P5",
+      "name": "Remaining 30-module scope",
+      "deliverables": [
+        "marketing",
+        "support",
+        "commerce",
+        "analytics",
+        "white-label",
+        "developer APIs",
+        "GCC localization",
+        "industry templates"
+      ],
+      "gate": "Each module meets documented acceptance criteria or is explicitly marked blocked"
+    },
+    {
+      "id": "P6",
+      "name": "Security, reliability and performance",
+      "deliverables": [
+        "threat model",
+        "OWASP ASVS-aligned review",
+        "secrets scan",
+        "SAST/SCA",
+        "RLS penetration cases",
+        "load tests",
+        "backup restore drill",
+        "accessibility audit"
+      ],
+      "gate": "No unresolved critical/high exploitable findings without approved mitigation"
+    },
+    {
+      "id": "P7",
+      "name": "Staging release and production handoff",
+      "deliverables": [
+        "CI/CD",
+        "staging E2E",
+        "migration dry run",
+        "runbooks",
+        "alerts",
+        "release checklist",
+        "rollback plan",
+        "evidence report"
+      ],
+      "gate": "Production deploy requires explicit owner approval"
+    }
+  ],
+  "database_test_requirements": [
+    "pgTAP for schema, constraints, functions, RLS enabled, tenant A cannot read/write tenant B, support grants expire and cannot escalate",
+    "Integration tests using actual staging PostgreSQL and non-service authenticated identities",
+    "Clean install migration test and upgrade migration test",
+    "Concurrent writes, retries, transaction rollback, webhook idempotency and unique constraint tests",
+    "Schema drift tests comparing SQL catalog, generated types, registry and repositories",
+    "Negative tests for missing tenant context, forged JWT claims, expired sessions and unauthorized exports"
+  ],
+  "quality_gates": {
+    "code": "TypeScript strict mode, lint, format, build and typecheck pass",
+    "tests": "All existing and new unit/integration/E2E/pgTAP tests pass; publish actual counts and failures",
+    "security": "No known exploitable critical/high findings; documented exceptions require approval",
+    "performance": "Set measurable p95 targets after baseline; run load tests for API, queue and DB",
+    "reliability": "Backup/restore verified, migrations reversible where possible, alerts and DLQ monitoring active",
+    "accessibility": "Keyboard and screen reader critical flows verified",
+    "release": "No production-ready claim if external approvals, staging access, tests or credentials are missing"
+  },
+  "ci_cd": [
+    "PR: formatting, lint, types, unit tests, schema drift, SAST, dependency/secret scanning",
+    "Ephemeral/staging: migration tests, pgTAP, real DB integration, API contract, Playwright E2E",
+    "Deploy: immutable artifact, migration approval gate, health checks, smoke tests, monitored rollout, rollback plan",
+    "Production: protected environments, human approval, least-privilege IAM, secrets manager, observability"
+  ],
+  "required_outputs": [
+    "Actual modified application source code and versioned SQL migrations in repository",
+    "docs/architecture.md and ERD",
+    "docs/schema-reconciliation.md with one row per runtime and migration table",
+    "docs/security-authorization-matrix.md",
+    "docs/integration-capability-matrix.md",
+    "docs/testing-evidence.md with commands and real results",
+    "docs/deployment-runbook.md and rollback/restore guide",
+    "Updated GO-LIVE-CHECKLIST.md",
+    "A final table for each module: implemented, tested, blocked, external approval needed, known limitations"
+  ],
+  "execution_protocol": "Work autonomously in dependency order; first inspect and summarize actual repository findings. Implement changes in small verified batches. After each phase run relevant commands and record evidence. When an account, API approval, secret, infrastructure access, or destructive decision is missing, stop only that dependent operation, clearly report the blocker, and continue independent tasks. Never fabricate verification. Ask for approval before production deployments or destructive actions.",
+  "completion_definition": "Production-ready only when all required modules in agreed scope have implemented real paths, migrations reconcile, RLS and tenant isolation pass against real staging Postgres, external integrations are approved and tested or clearly disabled, CI is green, security/performance/backup drills pass, and owner approves release."
+}

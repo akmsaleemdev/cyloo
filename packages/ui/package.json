@@ -1,0 +1,9 @@
+{
+  "name": "@crm/ui",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Design-system source of truth: brand tokens (light/dark), component classes, RTL-first rules. Consumed by apps/web via a single CSS import.",
+  "exports": {
+    "./tokens.css": "./tokens.css"
+  }
+}
